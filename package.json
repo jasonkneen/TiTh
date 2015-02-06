@@ -1,0 +1,39 @@
+{
+  "name": "tith",
+  "version": "0.0.9",
+  "description": "TiTh (TiTheme) - allows you to switch Alloy themes via the CLI.",
+  "main": "index.js",
+  "bin": {
+    "tith": "./bin/tith.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "directories": {
+    "bin": "./bin"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jasonkneen/tith"
+  },
+  "keywords": [
+    "ios",
+    "titanium",
+    "appcelerator",
+    "cli",
+    "TiApp",
+    "theme",
+    "alloy"
+  ],
+  "author": "Jason Kneen",
+  "license": "Apache Public License v2",
+  "bugs": {
+    "url": "https://github.com/jasonkneen/tith/issues"
+  },
+  "homepage": "https://github.com/jasonkneen/tith",
+  "dependencies": {
+    "chalk": "^0.5.1",
+    "commander": "^2.6.0",
+    "update-notifier": "^0.2.2"    
+  }
+}
