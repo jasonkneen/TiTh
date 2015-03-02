@@ -1,6 +1,6 @@
 # TiTh
 
-Allows you to switch Alloy themes from the command line and supports switching TiApp.xml files for multiple apps.
+Allows you to switch Alloy themes from the command line and also supports theme based TiApp.xml files.
 
 ## Why?
 
@@ -18,69 +18,56 @@ As global CLI:
 
 This will show the current theme name:
 ```
-$ tith    
+$ tith  
 ```
 ##Switch themes (Alloy)
 ```
-$ tith select <name> <platform>
+$ tith set <name> <platform>
 ```
 (remember to do a ti clean)
 
-if you omit a platform it'll default to ios.
+if you omit a platform (ios or android) it'll default to **ios**.
 
-##Switch TiApp.xml files
+##Theme-based tiapp.xml
 
-A nice feature is the ability to switch tiapp.xml files with the theme change. This means you can have one code base, use themes for different clients / apps and switch the tiapp.xml file to change the app name, id etc. 
+A handy  feature is the ability to switch tiapp.xml files with the theme change. This means you can have one code base, use themes for different clients / apps and switch the tiapp.xml file to change the app name, id etc. 
 
-So, make sure you config.json looks like this:
+The simplest way to use the tiapp.xml theming is to place your tiapp.xml file for each theme in the relevant folder. There's support for a single tiapp.xml file, or files per platform.
 
-```JSON
-{
-    "global": {
-        "appConfig": {            
-            "ios": {
-                "default": "tiapp_default.xml",
-                "app2": "tiapp_app2.xml",
-                "app3": "tiapp_app3.xml"
-            },
-            "android": {
-                "default": "tiapp_default.xml",
-                "app2": "tiapp_app2.xml",
-                "app3": "tiapp_app3.xml"
-            }
-        },
-        "theme": "app2"
-    },
-    "env:development": {},
-    "env:test": {},
-    "env:production": {},
-    "os:android": {},
-    "os:blackberry": {},
-    "os:ios": {},
-    "os:mobileweb": {},
-    "dependencies": {}
-}
-```
+Valid paths are (in order they are checked):
+<pre>
+app/themes/app1/ios/tiapp.xml
+app/themes/app1/android/tiapp.xml
+app/themes/app1/tiapp.xml
+</pre>
 
-The key things here are the "theme" reference and the "appConfig" section. In my example, the appIds for the apps I'm building are different (legacy thing), so I need a need a different tiapp.xml for each app *and* platform. (in the example above I use the same one for iOS and Android but they can be different).
+##Setting themes
 
-My workaround is to have the default tiapp.xml (where no theme is specified) copied to **tiapp_default.xml**, I then create variations of this as **tiapp_app1.xml** etc *and* I set git to ignore the tiapp.xml file I don't get crazy commits going on.
-
-The result of all this is I just need to do the following to build an app (I use TiNy to build so the syntax her might not look familar):
+Using the config above, the following will update the theme to **app1** and copy the tiapp.xml file from it's theme folder to the app root. It'll also clean the project.
 
 ```
-$ tith select app2 ios ; ti clean; ti build ios --tall --liveview
+$ tith select app1 ios ; ti clean; 
 ```
 
-This will switch theme, clean the project, and build it. Add some interesting sound effects with:-
+##Clearing themes
 
- ```
-$ tith select app2 android ; say "theme updated"; ti clean; say "I'm feeling as fresh as a daisy" ; ti ios --tall --liveview; say "I'm done"
-```
+To clear the theme, just use 
 
-:)
+$ tith clear;
+
+However, if you want to have a default tiapp.xml file when no theme is specified, you can do this by creating a specially named folder in themes folder, prexied with an underscore. So:
 
 <pre>
+app/themes/_default/tiapp.xml
+app/themes/_default/ios/tiapp.xml
+app/themes/_default/android/tiapp.xml
+</pre>
+
+(If a theme folder is prefixed with _ then the theme will be cleared in config.json but the tiapp.xml will still be used).
+
+Suggestions, improvements, PRs, welcome!
+
+##License
 Copyright 2015 Jason Kneen
 
 Licensed under the Apache License, Version 2.0 (the "License");

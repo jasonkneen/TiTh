@@ -13,55 +13,56 @@ if (!fs.existsSync('./app/config.json')) {
     tith();
 }
 
+// helper, quick copy
+function createTiAppFile(fromPath) {
+    fs.createReadStream(fromPath).pipe(fs.createWriteStream("tiapp.xml"));
+    console.log(chalk.red("Remember to do ti clean!\n"));
+}
+
 // main function
 function tith() {
 
     // status command, shows the current config
     function status() {
         console.log('\n');
-        console.log('Current Alloy theme is: ' + chalk.cyan(alloyCfg.global.theme));
+        console.log('Current Alloy theme is: ' + chalk.cyan(alloyCfg.global.theme || "not defined"));
         console.log('\n');
     }
 
-    // select a new config by name
-    function select(name, platform) {
+    // set a new config by name
+    function set(name, platform) {
 
         platform = platform || "ios";
 
         if (name) {
-            alloyCfg.global.theme = name
-            console.log(chalk.yellow('\nUpdated Theme to ') + chalk.cyan(alloyCfg.global.theme) + "\n");
+
+            if (name.substring(0, 1) == "_") {
+                alloyCfg.global.theme = ""
+                console.log(chalk.yellow("\nClearing theme in config.json\n"));
+            } else {
+                alloyCfg.global.theme = name
+                console.log(chalk.yellow('\nUpdated Theme to ') + chalk.cyan(alloyCfg.global.theme) + "\n");
+            }
+
             fs.writeFileSync("./app/config.json", JSON.stringify(alloyCfg, null, 4));
 
             // check if we have an app config
-            if (alloyCfg.global.appConfig) {
+            if (fs.existsSync("./app/themes/" + name + "/" + platform + "/tiapp.xml")) {
 
-                var themeNameToUse;
+                // if it exists in the themes folder, in a platform subfolder
+                console.log(chalk.green('Found a tiapp.xml in the theme platform folder\n'));
+                createTiAppFile("./app/themes/" + name + "/" + platform + "/tiapp.xml");
 
-                if (!alloyCfg.global.theme && alloyCfg.global.appConfig[platform].default) {
-                    // no theme defined but a default TiApp.xml defined
-                    console.log(chalk.yellow('\nUsing the default tiapp.xml file\n'));
+            } else if (fs.existsSync("./app/themes/" + name + "/tiapp.xml")) {
 
-                    themeNameToUse = "default";
+                // if it exists in the top level theme folder
+                console.log(chalk.green('Found a tiapp.xml in the theme folder\n'));
+                createTiAppFile("./app/themes/" + name + "/tiapp.xml");
 
-                } else if (!alloyCfg.global.appConfig[platform].default) {
-                    return;
-                }
-
-                // get the filename of the app config to switch to
-                var appConfigFileName = alloyCfg.global.appConfig[platform][alloyCfg.global.theme];
-
-                console.log(chalk.yellow("Switching tiapp.xml to use " + chalk.cyan(appConfigFileName) + "\n"));
-
-                // get the new file
-                var configToSwitchTo = fs.readFileSync("./" + appConfigFileName, "utf-8");
-
-                // write it to tiapp.xml
-                fs.writeFileSync("./tiapp.xml", configToSwitchTo);
-
+            } else {
+                console.log(chalk.cyan("No tiapp.xml found for " + name) + "\n");
             }
 
-            console.log(chalk.red("Remember to do ti clean!\n"));
         }
     }
 
@@ -72,7 +73,7 @@ function tith() {
         .version(pkg.version, '-v, --version')
         .usage('[options]')
         .description(pkg.description)
-        .option('-s, --select <name>', 'Updates config.json to use the theme specified by <name>')
+        .option('-s, --set <name>', 'Updates config.json to use the theme specified by <name>')
 
     program.parse(process.argv);
 
@@ -82,8 +83,8 @@ function tith() {
         packageVersion: pkg.version
     }).notify();
 
-    if (program.select) {
-        select(program.args[0], program.args[1]);
+    if (program.set) {
+        set(program.args[0], program.args[1]);
     } else {
         status();
     }
