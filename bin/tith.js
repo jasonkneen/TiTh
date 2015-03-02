@@ -24,7 +24,9 @@ function tith() {
     }
 
     // select a new config by name
-    function select(name) {
+    function select(name, platform) {
+
+        platform = platform || "ios";
 
         if (name) {
             alloyCfg.global.theme = name
@@ -36,18 +38,18 @@ function tith() {
 
                 var themeNameToUse;
 
-                if (!alloyCfg.global.theme && alloyCfg.global.appConfig["ios"].default) {
+                if (!alloyCfg.global.theme && alloyCfg.global.appConfig[platform].default) {
                     // no theme defined but a default TiApp.xml defined
                     console.log(chalk.yellow('\nUsing the default tiapp.xml file\n'));
 
                     themeNameToUse = "default";
 
-                } else if (!alloyCfg.global.appConfig["ios"].default) {
+                } else if (!alloyCfg.global.appConfig[platform].default) {
                     return;
                 }
 
                 // get the filename of the app config to switch to
-                var appConfigFileName = alloyCfg.global.appConfig["ios"][alloyCfg.global.theme];
+                var appConfigFileName = alloyCfg.global.appConfig[platform][alloyCfg.global.theme];
 
                 console.log(chalk.yellow("Switching tiapp.xml to use " + chalk.cyan(appConfigFileName) + "\n"));
 
@@ -81,7 +83,7 @@ function tith() {
     }).notify();
 
     if (program.select) {
-        select(program.args[0]);
+        select(program.args[0], program.args[1]);
     } else {
         status();
     }
