@@ -75,7 +75,7 @@ $ tith select app2 ios ; ti clean; ti build ios --tall --liveview
 This will switch theme, clean the project, and build it. Add some interesting sound effects with:-
 
  ```
-$ tith select app2 ; say "theme updated"; ti clean; say "I'm feeling as fresh as a daisy" ; ti ios --tall --liveview; say "I'm done"
+$ tith select app2 android ; say "theme updated"; ti clean; say "I'm feeling as fresh as a daisy" ; ti ios --tall --liveview; say "I'm done"
 ```
 
 :)
