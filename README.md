@@ -69,7 +69,7 @@ My workaround is to have the default tiapp.xml (where no theme is specified) cop
 The result of all this is I just need to do the following to build an app (I use TiNy to build so the syntax her might not look familar):
 
 ```
-$ tith select app2 ; ti clean; ti build ios --tall --liveview
+$ tith select app2 ios ; ti clean; ti build ios --tall --liveview
 ```
 
 This will switch theme, clean the project, and build it. Add some interesting sound effects with:-
