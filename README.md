@@ -22,9 +22,11 @@ $ tith
 ```
 ##Switch themes (Alloy)
 ```
-$ tith select <name>
+$ tith select <name> <platform>
 ```
 (remember to do a ti clean)
+
+if you omit a platform it'll default to ios.
 
 ##Switch TiApp.xml files
 
