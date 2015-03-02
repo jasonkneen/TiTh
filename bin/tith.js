@@ -17,7 +17,7 @@ if (!fs.existsSync('./app/config.json')) {
 function tith() {
 
     // status command, shows the current config
-    function status() {        
+    function status() {
         console.log('\n');
         console.log('Current Alloy theme is: ' + chalk.cyan(alloyCfg.global.theme));
         console.log('\n');
@@ -28,10 +28,39 @@ function tith() {
 
         if (name) {
             alloyCfg.global.theme = name
-            console.log('\nUpdated Theme to ' + chalk.cyan(alloyCfg.global.theme));
-            fs.writeFileSync("./app/config.json", JSON.stringify(alloyCfg, null,4));
-        }
+            console.log(chalk.yellow('\nUpdated Theme to ') + chalk.cyan(alloyCfg.global.theme) + "\n");
+            fs.writeFileSync("./app/config.json", JSON.stringify(alloyCfg, null, 4));
 
+            // check if we have an app config
+            if (alloyCfg.global.appConfig) {
+
+                var themeNameToUse;
+
+                if (!alloyCfg.global.theme && alloyCfg.global.appConfig["ios"].default) {
+                    // no theme defined but a default TiApp.xml defined
+                    console.log(chalk.yellow('\nUsing the default tiapp.xml file\n'));
+
+                    themeNameToUse = "default";
+
+                } else if (!alloyCfg.global.appConfig["ios"].default) {
+                    return;
+                }
+
+                // get the filename of the app config to switch to
+                var appConfigFileName = alloyCfg.global.appConfig["ios"][alloyCfg.global.theme];
+
+                console.log(chalk.yellow("Switching tiapp.xml to use " + chalk.cyan(appConfigFileName) + "\n"));
+
+                // get the new file
+                var configToSwitchTo = fs.readFileSync("./" + appConfigFileName, "utf-8");
+
+                // write it to tiapp.xml
+                fs.writeFileSync("./tiapp.xml", configToSwitchTo);
+
+            }
+
+            console.log(chalk.red("Remember to do ti clean!\n"));
+        }
     }
 
     var alloyCfg = JSON.parse(fs.readFileSync("./app/config.json", "utf-8"));
