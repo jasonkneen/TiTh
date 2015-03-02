@@ -53,9 +53,11 @@ $ tith select app1 ios ; ti clean;
 
 To clear the theme, just use 
 
+```
 $ tith clear;
+```
 
-However, if you want to have a default tiapp.xml file when no theme is specified, you can do this by creating a specially named folder in themes folder, prexied with an underscore. So:
+However, if you want to have a default tiapp.xml file when no theme is specified, you can do this by creating a specially named folder in themes folder, prefixed with an underscore. So:
 
 <pre>
 app/themes/_default/tiapp.xml
