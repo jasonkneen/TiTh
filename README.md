@@ -46,7 +46,7 @@ app/themes/app1/tiapp.xml
 Using the config above, the following will update the theme to **app1** and copy the tiapp.xml file from it's theme folder to the app root. It'll also clean the project.
 
 ```
-$ tith select app1 ios ; ti clean; 
+$ tith set app1 ios ; ti clean; 
 ```
 
 ##Clearing themes
