@@ -67,6 +67,14 @@ app/themes/_default/android/tiapp.xml
 
 (If a theme folder is prefixed with _ then the theme will be cleared in config.json but the tiapp.xml will still be used).
 
+##Legacy Mode
+
+If you want to enable the TiCh legacy mode, to use the tich.cfg file to replace specific sections of your tiapp.xml just enable the legacy switch.
+
+```
+$ tith select app1 --legacy;
+```
+
 Suggestions, improvements, PRs, welcome!
 
 ##License

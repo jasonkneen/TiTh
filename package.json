@@ -1,6 +1,6 @@
 {
   "name": "tith",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "TiTh (TiTheme) - allows you to switch Alloy themes via the terminal.",
   "main": "index.js",
   "bin": {
@@ -34,6 +34,8 @@
   "dependencies": {
     "chalk": "^0.5.1",
     "commander": "^2.6.0",
-    "update-notifier": "^0.2.2"    
+    "update-notifier": "^0.2.2",
+    "tiapp.xml": "^0.2.2",
+    "xpath": "^0.0.9"
   }
 }
