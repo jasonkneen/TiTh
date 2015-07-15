@@ -4,7 +4,9 @@ var program = require('commander'),
     chalk = require('chalk'),
     updateNotifier = require('update-notifier'),
     fs = require("fs"),
-    pkg = require('../package.json')
+    pkg = require('../package.json'),
+    tiappxml = require('tiapp.xml'),
+    xpath = require('xpath')
 
 // check if the TiApp.xml an TiCh config file exists
 if (!fs.existsSync('./app/config.json')) {
@@ -66,6 +68,148 @@ function tith() {
         }
     }
 
+
+    // Select a TiCH
+    function tichSelect(name) {
+        var regex = /\$tiapp\.(.*)\$/;
+
+        if(name){
+
+            //Update the theme on config.json
+            if (name.substring(0, 1) == "_") {
+                alloyCfg.global.theme = ""
+                console.log(chalk.yellow("\nClearing theme in config.json\n"));
+            } else {
+                alloyCfg.global.theme = name
+                console.log(chalk.yellow('\nUpdated Theme to ') + chalk.cyan(alloyCfg.global.theme) + "\n");
+            }
+
+            fs.writeFileSync("./app/config.json", JSON.stringify(alloyCfg, null, 4));
+
+            console.log("Entering TiCh Legacy Mode");
+
+            var cfgfile = program.cfgfile ? program.cfgfile : 'tich.cfg';
+            var infile = './tiapp.xml';
+            var outfilename = './tiapp.xml';
+
+            // check that all required input paths are good
+            [cfgfile, infile].forEach(function (file) {
+                if (!fs.existsSync(file)) {
+                    console.log(chalk.red('Cannot find ' + file));
+                    program.help();
+                }
+            });
+
+            // read in our config
+            var cfg = JSON.parse(fs.readFileSync(cfgfile, "utf-8"));
+
+            // read in the app config
+            var tiapp = tiappxml.load(infile);
+
+            // find the config name specified
+            cfg.configs.forEach(function(config) {
+
+                if (config.name === name) {
+                    console.log('\nFound a config for ' + chalk.cyan(config.name) + '\n');
+
+                    for (var setting in config.settings) {
+
+                        if (!config.settings.hasOwnProperty(setting)) continue;
+
+                        if (setting != "properties" && setting != "raw") {
+
+                            var now = new Date();
+                            var replaceWith = config.settings[setting]
+                                .replace('$DATE$', now.toLocaleDateString())
+                                .replace('$TIME$', now.toLocaleTimeString())
+                                .replace('$DATETIME$', now.toLocaleString())
+                                .replace('$TIME_EPOCH$', now.getTime().toString());
+
+                            var matches = regex.exec(replaceWith);
+                            if (matches && matches[1]) {
+                                var propName = matches[1];
+                                replaceWith = replaceWith.replace(regex, tiapp[propName]);
+                            }
+
+                            tiapp[setting] = replaceWith;
+
+                            console.log('Changing ' + chalk.cyan(setting) + ' to ' + chalk.yellow(replaceWith));
+                        }
+
+                    }
+
+                    if (config.settings.properties) {
+                        for (var property in config.settings.properties) {
+
+                            if (!config.settings.properties.hasOwnProperty(property)) continue;
+
+                            var replaceWith = config.settings.properties[property]
+                                .replace('$DATE$', new Date().toLocaleDateString())
+                                .replace('$TIME$', new Date().toLocaleTimeString())
+                                .replace('$DATETIME$', new Date().toLocaleString())
+                                .replace('$TIME_EPOCH$', new Date().getTime().toString());
+
+
+                            var matches = regex.exec(replaceWith);
+                            if (matches && matches[1]) {
+                                var propName = matches[1];
+                                replaceWith = replaceWith.replace(regex, tiapp[propName]);
+                            }
+
+                            tiapp.setProperty(property, replaceWith);
+
+                            console.log('Changing App property ' + chalk.cyan(property) + ' to ' + chalk.yellow(replaceWith));
+
+                        }
+                    }
+
+                    if (config.settings.raw) {
+
+                        var doc = tiapp.doc;
+                        var select = xpath.useNamespaces({
+                            "ti": "http://ti.appcelerator.org",
+                            "android": "http://schemas.android.com/apk/res/android"
+                        });
+                        for (var path in config.settings.raw) {
+
+                            if (!config.settings.raw.hasOwnProperty(path)) continue;
+
+                            var node = select(path, doc, true);
+                            if (!node) {
+                                console.log(chalk.yellow('Could not find ' + path + ", skipping"));
+                                continue;
+                            }
+
+                            var replaceWith = config.settings.raw[path]
+                                .replace('$DATE$', new Date().toLocaleDateString())
+                                .replace('$TIME$', new Date().toLocaleTimeString())
+                                .replace('$DATETIME$', new Date().toLocaleString())
+                                .replace('$TIME_EPOCH$', new Date().getTime().toString());
+
+
+                            var matches = regex.exec(replaceWith);
+                            if (matches && matches[1]) {
+                                var propName = matches[1];
+                                replaceWith = replaceWith.replace(regex, tiapp[propName]);
+                            }
+
+                            node.value = replaceWith;
+
+                            console.log('Changing Raw property ' + chalk.cyan(path) + ' to ' + chalk.yellow(replaceWith));
+
+                        }
+                    }
+
+                    console.log(chalk.green('\n' + outfilename + ' updated\n'));
+
+                    tiapp.write(outfilename);
+
+                }
+            });
+
+        }
+    }    
+
     var alloyCfg = JSON.parse(fs.readFileSync("./app/config.json", "utf-8"));
 
     // setup CLI
@@ -73,7 +217,9 @@ function tith() {
         .version(pkg.version, '-v, --version')
         .usage('[options]')
         .description(pkg.description)
-        .option('-s, --set <name>', 'Updates config.json to use the theme specified by <name>')
+        .option('-s, --set <name> <platform>', 'Updates config.json to use the theme specified by <name> and <platform>')
+        .option('--legacy', 'Enables legacy mode and uses TiCh config files')
+        .option('-f, --cfgfile <path>', 'Specifies the legacy tich config file to use')
 
     program.parse(process.argv);
 
@@ -84,7 +230,13 @@ function tith() {
     }).notify();
 
     if (program.set) {
-        set(program.args[0], program.args[1]);
+        if( program.legacy ){
+            tichSelect(program.args[0]);
+        }
+        else{
+            set(program.args[0], program.args[1]);
+        }
+
     } else {
         status();
     }
