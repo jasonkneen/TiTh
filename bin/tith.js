@@ -4,7 +4,8 @@ var program = require('commander'),
     chalk = require('chalk'),
     updateNotifier = require('update-notifier'),
     fs = require("fs"),
-    pkg = require('../package.json')
+    pkg = require('../package.json'),
+    exec = require('child_process').exec
 
 // check if the TiApp.xml an TiCh config file exists
 if (!fs.existsSync('./app/config.json')) {
@@ -16,7 +17,14 @@ if (!fs.existsSync('./app/config.json')) {
 // helper, quick copy
 function createTiAppFile(fromPath) {
     fs.createReadStream(fromPath).pipe(fs.createWriteStream("tiapp.xml"));
-    console.log(chalk.red("Remember to do ti clean!\n"));
+    exec("ti clean", function(err, stdout, stderr) {
+      if (err) {
+          console.log(chalk.red('Ti Clean command failed'));
+      } else {
+          console.log(chalk.green(stdout));
+          console.log(chalk.cyan('Project clean and ready to build'));
+      }
+    });
 }
 
 // main function
