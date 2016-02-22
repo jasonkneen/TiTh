@@ -43,22 +43,23 @@ app/themes/app1/tiapp.xml
 
 ##Theme-based DefaultIcon.png
 
-As of version 1.1.2 you can also theme the DefaultIcon.png for iOS -- DefaultIcon.png was added in Titanium SDK 5.0.0+ to auto-generate the iOS App Icons. Unfortunately DefaultIcon.png isn't supported with themes out-of-the-box with Titanium so TiTh now supports this.
+As of version 1.1.2 you can also theme the DefaultIcon.png -- DefaultIcon.png was added in Titanium SDK 5.0.0+ to auto-generate all required App Icons. Unfortunately DefaultIcon.png isn't supported with themes out-of-the-box with Titanium so TiTh now supports this.
 
-Like the tiapp.xml, just drop a DefaultIcon.png in the theme folder OR the iOS platform folder and TiTh will find this and copy to the project root.
+Like the tiapp.xml, just drop a DefaultIcon.png in the theme folder OR the platform folder and TiTh will find this and copy to the project root.
 
 Valid paths are (in order they are checked):
 <pre>
 app/themes/app1/ios/DefaultIcon.png
+app/themes/app1/android/DefaultIcon.png
 app/themes/app1/DefaultIcon.png
 </pre>
 
 ##Setting themes
 
-Using the config above, the following will update the theme to **app1** and copy the tiapp.xml file from it's theme folder to the app root. It'll also clean the project.
+Using the config above, the following will update the theme to **app1** and copy the tiapp.xml file from it's theme folder to the app root.
 
 ```
-$ tith select app1 ios ; ti clean;
+$ tith select app1 ios ;
 ```
 
 ##Clearing themes

@@ -78,20 +78,18 @@ function tith() {
             }
 
             // check if we havea DefaultIcon.png
-            if (platform === "ios") {
-                if (fs.existsSync("./app/themes/" + name + "/" + platform + "/DefaultIcon.png")) {
+            if (fs.existsSync("./app/themes/" + name + "/" + platform + "/DefaultIcon.png")) {
 
-                    // if it exists in the themes folder, in a platform subfolder
-                    console.log(chalk.blue('Found a DefaultIcon.png in the theme platform folder\n'));
-                    copyFile("./app/themes/" + name + "/" + platform + "/DefaultIcon.png", "./DefaultIcon.png")
+                // if it exists in the themes folder, in a platform subfolder
+                console.log(chalk.blue('Found a DefaultIcon.png in the theme platform folder\n'));
+                copyFile("./app/themes/" + name + "/" + platform + "/DefaultIcon.png", "./DefaultIcon.png")
 
-                } else if (fs.existsSync("./app/themes/" + name + "/DefaultIcon.png")) {
+            } else if (fs.existsSync("./app/themes/" + name + "/DefaultIcon.png")) {
 
-                    // if it exists in the top level theme folder
-                    console.log(chalk.blue('Found a DefaultIcon.png in the theme folder\n'));
-                    copyFile("./app/themes/" + name + "/" + "/DefaultIcon.png", "./DefaultIcon.png")
+                // if it exists in the top level theme folder
+                console.log(chalk.blue('Found a DefaultIcon.png in the theme folder\n'));
+                copyFile("./app/themes/" + name + "/" + "/DefaultIcon.png", "./DefaultIcon.png")
 
-                }
             }
         }
     }
