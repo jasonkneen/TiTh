@@ -18,12 +18,18 @@ if (!fs.existsSync('./app/config.json')) {
 function createTiAppFile(fromPath) {
     fs.createReadStream(fromPath).pipe(fs.createWriteStream("tiapp.xml"));
     exec("ti clean", function(err, stdout, stderr) {
-      if (err) {
-          console.log(chalk.red('Ti Clean command failed'));
-      } else {
-          console.log(chalk.green(stdout));
-          console.log(chalk.cyan('Project clean and ready to build'));
-      }
+        if (err) {
+            console.log(chalk.red('Ti Clean command failed'));
+        } else {
+            console.log(chalk.green(stdout));
+            console.log(chalk.cyan('Project clean and ready to build'));
+        }
+    });
+}
+
+function copyFile(fromPath, toPath) {
+    fs.readFile(fromPath, function(err, data) {
+        fs.writeFile(toPath, data);
     });
 }
 
@@ -71,6 +77,22 @@ function tith() {
                 console.log(chalk.cyan("No tiapp.xml found for " + name) + "\n");
             }
 
+            // check if we havea DefaultIcon.png
+            if (platform === "ios") {
+                if (fs.existsSync("./app/themes/" + name + "/" + platform + "/DefaultIcon.png")) {
+
+                    // if it exists in the themes folder, in a platform subfolder
+                    console.log(chalk.blue('Found a DefaultIcon.png in the theme platform folder\n'));
+                    copyFile("./app/themes/" + name + "/" + platform + "/DefaultIcon.png", "./DefaultIcon.png")
+
+                } else if (fs.existsSync("./app/themes/" + name + "/DefaultIcon.png")) {
+
+                    // if it exists in the top level theme folder
+                    console.log(chalk.blue('Found a DefaultIcon.png in the theme folder\n'));
+                    copyFile("./app/themes/" + name + "/" + "/DefaultIcon.png", "./DefaultIcon.png")
+
+                }
+            }
         }
     }
 
