@@ -79,19 +79,24 @@ function tith() {
                 console.log(chalk.cyan("No tiapp.xml found for " + name) + "\n");
             }
 
-            // check if we havea DefaultIcon.png
-            if (fs.existsSync("./app/themes/" + name + "/" + platform + "/DefaultIcon.png")) {
-
-                // if it exists in the themes folder, in a platform subfolder
-                console.log(chalk.blue('Found a DefaultIcon.png in the theme platform folder\n'));
-                copyFile("./app/themes/" + name + "/" + platform + "/DefaultIcon.png", "./DefaultIcon.png")
-
-            } else if (fs.existsSync("./app/themes/" + name + "/DefaultIcon.png")) {
-
-                // if it exists in the top level theme folder
-                console.log(chalk.blue('Found a DefaultIcon.png in the theme folder\n'));
-                copyFile("./app/themes/" + name + "/" + "/DefaultIcon.png", "./DefaultIcon.png")
+            var externalIcons = ["DefaultIcon", "DefaultIcon-ios", "iTunesConnect", "MarketplaceArtwork"];
+            var iconName = '';
+            for (var i = 0; i < externalIcons.length; i++) {
+                iconName = externalIcons[i];
+                // check if we havea DefaultIcon.png
+                if (fs.existsSync("./app/themes/" + name + "/" + platform + "/" + iconName + ".png")) {
+                    // if it exists in the themes folder, in a platform subfolder
+                    console.log(chalk.blue('Found a ' + iconName + '.png in the theme platform folder\n'));
+                    copyFile("./app/themes/" + name + "/" + platform + "/" + iconName + ".png", "./" + iconName + ".png");
+                } else if (fs.existsSync("./app/themes/" + name + "/" + iconName + ".png")) {
+                    // if it exists in the top level theme folder
+                    console.log(chalk.blue('Found a ' + iconName + '.png in the theme folder\n'));
+                    copyFile("./app/themes/" + name + "/" + "/" + iconName + ".png", "./" + iconName + ".png");
+                } else {
+                    console.log(chalk.red(iconName + '.png NOT Exists!\n'));
+                }
             }
+
             if (fs.existsSync("./app/themes/" + name + "/" + platform)) {
                 console.log(chalk.blue('Fixing Resources Folder\n'));
                 var sourceDir = "./app/themes/" + name + "/" + platform;
