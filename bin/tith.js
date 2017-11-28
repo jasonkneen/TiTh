@@ -2,11 +2,11 @@
 var path = require('path');
 
 var program = require('commander'),
-        chalk = require('chalk'),
-        updateNotifier = require('update-notifier'),
-        fs = require("fs"),
-        pkg = require('../package.json'),
-        exec = require('child_process').exec;
+    chalk = require('chalk'),
+    updateNotifier = require('update-notifier'),
+    fs = require("fs"),
+    pkg = require('../package.json'),
+    exec = require('child_process').exec;
 
 
 // check if the TiApp.xml an TiCh config file exists
@@ -24,7 +24,7 @@ function createTiAppFile(fromPath) {
             console.log(chalk.red('Ti Clean command failed'));
         } else {
             console.log(chalk.green(stdout));
-            console.log(chalk.cyan('Project clean and ready to build'));
+            console.log(chalk.green('Project cleaned and ready to build'));
         }
     });
 }
@@ -53,11 +53,11 @@ function tith() {
         if (name) {
 
             if (name.substring(0, 1) == "_") {
-                alloyCfg.global.theme = ""
+                alloyCfg.global.theme = "";
                 console.log(chalk.yellow("\nClearing theme in config.json\n"));
             } else {
-                alloyCfg.global.theme = name
-                console.log(chalk.yellow('\nUpdated Theme to ') + chalk.cyan(alloyCfg.global.theme) + "\n");
+                alloyCfg.global.theme = name;
+                console.log(chalk.green('\nUpdated Theme to ') + chalk.cyan(alloyCfg.global.theme) + "\n");
             }
 
             fs.writeFileSync("./app/config.json", JSON.stringify(alloyCfg, null, 4));
@@ -86,36 +86,27 @@ function tith() {
                 // check if we havea DefaultIcon.png
                 if (fs.existsSync("./app/themes/" + name + "/" + platform + "/" + iconName + ".png")) {
                     // if it exists in the themes folder, in a platform subfolder
-                    console.log(chalk.blue('Found a ' + iconName + '.png in the theme platform folder\n'));
+                    console.log(chalk.green('Found a ' + iconName + '.png in the theme platform folder\n'));
                     copyFile("./app/themes/" + name + "/" + platform + "/" + iconName + ".png", "./" + iconName + ".png");
                 } else if (fs.existsSync("./app/themes/" + name + "/" + iconName + ".png")) {
                     // if it exists in the top level theme folder
-                    console.log(chalk.blue('Found a ' + iconName + '.png in the theme folder\n'));
+                    console.log(chalk.green('Found a ' + iconName + '.png in the theme folder\n'));
                     copyFile("./app/themes/" + name + "/" + "/" + iconName + ".png", "./" + iconName + ".png");
                 } else {
-                    console.log(chalk.red(iconName + '.png NOT Exists!\n'));
+                    console.log(chalk.yellow(iconName + '.png does not exist for this theme.\n'));
                 }
             }
 
-            if (fs.existsSync("./app/themes/" + name + "/" + platform)) {
-                console.log(chalk.blue('Fixing Resources Folder\n'));
-                var sourceDir = "./app/themes/" + name + "/" + platform;
-                var targetDir = "./app/assets/" + platform;
-                ncp(sourceDir, targetDir, function (err) {
-                    if (err) {
-                        return console.error(err);
-                    }
-                    console.log('done moving files!');
-                });
-            }
+                // if it exists in the themes folder, in a platform subfolder
+                console.log(chalk.green('Found a DefaultIcon.png in the theme platform folder\n'));
+                copyFile("./app/themes/" + name + "/" + platform + "/DefaultIcon.png", "./DefaultIcon.png");
 
             function ncp(source, dest, options, callback) {
                 var cback = callback;
 
-                if (!callback) {
-                    cback = options;
-                    options = {};
-                }
+                // if it exists in the top level theme folder
+                console.log(chalk.green('Found a DefaultIcon.png in the theme folder\n'));
+                copyFile("./app/themes/" + name + "/" + "/DefaultIcon.png", "./DefaultIcon.png");
 
                 var basePath = process.cwd(),
                         currentPath = path.resolve(basePath, source),
@@ -363,7 +354,11 @@ function tith() {
     }
     var alloyCfg = JSON.parse(fs.readFileSync("./app/config.json", "utf-8"));
     // setup CLI
-    program.version(pkg.version, '-v, --version').usage('[options]').description(pkg.description).option('-s, --set <name>', 'Updates config.json to use the theme specified by <name>')
+    program
+        .version(pkg.version, '-v, --version')
+        .usage('[options]')
+        .description(pkg.description)
+        .option('-s, set name platform', 'Updates config.json to use the theme specified by name and platform');
 
     program.parse(process.argv);
 
@@ -379,4 +374,3 @@ function tith() {
         status();
     }
 }
-

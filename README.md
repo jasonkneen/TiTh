@@ -22,10 +22,8 @@ $ tith
 ```
 ##Switch themes (Alloy)
 ```
-$ tith select <name> <platform>
+$ tith set <name> <platform>
 ```
-(remember to do a ti clean)
-
 if you omit a platform (ios or android) it'll default to **ios**.
 
 ##Theme-based tiapp.xml
@@ -59,7 +57,7 @@ app/themes/app1/DefaultIcon.png
 Using the config above, the following will update the theme to **app1** and copy the tiapp.xml file from it's theme folder to the app root.
 
 ```
-$ tith select app1 ios ;
+$ tith set app1 ios ;
 ```
 
 ##Clearing themes
