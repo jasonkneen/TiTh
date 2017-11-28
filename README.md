@@ -22,7 +22,7 @@ $ tith
 ```
 ##Switch themes (Alloy)
 ```
-$ tith set <name> <platform>
+$ tith select <name> <platform>
 ```
 (remember to do a ti clean)
 
