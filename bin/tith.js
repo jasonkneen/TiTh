@@ -19,7 +19,7 @@ if (!fs.existsSync('./app/config.json')) {
 // helper, quick copy
 function createTiAppFile(fromPath) {
     fs.createReadStream(fromPath).pipe(fs.createWriteStream("tiapp.xml"));
-    exec("ti clean", function (err, stdout, stderr) {
+    exec("appc ti clean", function (err, stdout, stderr) {
         if (err) {
             console.log(chalk.red('Ti Clean command failed'));
         } else {
@@ -31,7 +31,7 @@ function createTiAppFile(fromPath) {
 
 function copyFile(fromPath, toPath) {
     fs.readFile(fromPath, function (err, data) {
-        fs.writeFile(toPath, data);
+        fs.writeFile(toPath, data, (error) => { /* handle error */ });
     });
 }
 
