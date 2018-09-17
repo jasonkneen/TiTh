@@ -358,6 +358,7 @@ function tith() {
         .version(pkg.version, '-v, --version')
         .usage('[options]')
         .description(pkg.description)
+        .option('-F, --fastlane', 'Also copies a theme\'s fastlane files')
         .option('-s, set name platform', 'Updates config.json to use the theme specified by name and platform');
 
     program.parse(process.argv);
