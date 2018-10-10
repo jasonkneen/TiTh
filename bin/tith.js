@@ -356,10 +356,28 @@ function tith() {
     // setup CLI
     program
         .version(pkg.version, '-v, --version')
-        .usage('[options]')
-        .description(pkg.description)
-        .option('-F, --fastlane', 'Also copies a theme\'s fastlane files')
-        .option('-s, set name platform', 'Updates config.json to use the theme specified by name and platform');
+        .description(pkg.description);
+
+    program
+      .command('status')
+      .description("Shows the current configured theme")
+      .action(status);
+
+    program
+      .command('set <theme> [platform]')
+      .description('Updates config.json to use the theme specified by name and platform')
+      .option('-F, --fastlane', 'Also copies a theme\'s fastlane files')
+      .action(set);
+
+    program
+      .command('clear')
+      .description("Clears the configured theme")
+      .action(set);
+
+    program
+      .command('*')
+      .description("Any unhandled command will default to status")
+      .action(status);
 
     program.parse(process.argv);
 
