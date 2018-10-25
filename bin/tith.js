@@ -39,22 +39,29 @@ function copyFile(fromPath, toPath) {
 function tith() {
 
     // status command, shows the current config
-    function status() {
+    function status(cmd) {
         console.log('\n');
         console.log('Current Alloy theme is: ' + chalk.cyan(alloyCfg.global.theme || "not defined"));
         console.log('\n');
     }
 
+    // clear command, clears the current theme in config
+    function clear(cmd) {
+      alloyCfg.global.theme = "";
+      console.log(chalk.yellow("\nClearing theme in config.json\n"));
+    }
+
     // set a new config by name
-    function set(name, platform) {
+    function set(name, platform, cmd) {
 
         platform = platform || "ios";
 
         if (name) {
 
-            if (name.substring(0, 1) == "_") {
-                alloyCfg.global.theme = "";
-                console.log(chalk.yellow("\nClearing theme in config.json\n"));
+            if (typeof name != "string" ) {
+                clear();
+            } else if (name.substring(0, 1) == "_") {
+                clear();
             } else {
                 alloyCfg.global.theme = name;
                 console.log(chalk.green('\nUpdated Theme to ') + chalk.cyan(alloyCfg.global.theme) + "\n");
