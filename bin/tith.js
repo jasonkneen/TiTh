@@ -386,10 +386,4 @@ function tith() {
         packageName: pkg.name,
         packageVersion: pkg.version
     }).notify();
-
-    if (program.set) {
-        set(program.args[0], program.args[1]);
-    } else {
-        status();
-    }
 }
