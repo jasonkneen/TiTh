@@ -124,24 +124,13 @@ function tith() {
 
               if (cmd.fastlane) {
 
-                if (platform == "android") {
-                  //Default to en-US if not specified
-                  if (cmd.locale) {
-                    var locale = "/"+cmd.locale;
-                  } else {
-                    var locale = "/en-US";
-                  }
-                } else {
-                  locale = "";
-                }
-
                 //Check for and log which files exist
 
                 // Check for Appfile
-                if (fs.existsSync("./app/themes/" + name + "/platform/" + platform + "/fastlane" + locale + "/Appfile")) {
+                if (fs.existsSync("./app/themes/" + name + "/platform/" + platform + "/fastlane/Appfile")) {
 
                   console.log(chalk.green("Found an Appfile inside the theme's fastlane folder.\n"));
-                  copyFile("./app/themes/" + name + "/platform/" + platform + "/fastlane" + locale + "/Appfile", "./fastlane/Appfile");
+                  copyFile("./app/themes/" + name + "/platform/" + platform + "/fastlane/Appfile", "./fastlane/Appfile");
 
                 } else {
                     console.log(chalk.yellow("An Appfile does not exist for this theme.\n"));
@@ -151,7 +140,8 @@ function tith() {
                 // Copy over metadata files
                 if(platform == "android"){
 
-                }*/
+                }
+                */
 
               } else {
                 // Prompt availability of option
