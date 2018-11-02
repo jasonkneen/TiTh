@@ -1,6 +1,6 @@
 {
   "name": "tith",
-  "version": "1.1.5",
+  "version": "1.2.0",
   "description": "TiTh (TiTheme) - allows you to switch Alloy themes via the terminal.",
   "main": "index.js",
   "bin": {
