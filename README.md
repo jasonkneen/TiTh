@@ -26,7 +26,7 @@ $ tith set <name> <platform>
 ```
 if you omit a platform (ios or android) it'll default to **ios**.
 
-##Theme-based tiapp.xml
+## Theme-based tiapp.xml
 
 A handy feature is the ability to switch tiapp.xml files with the theme change. This means you can have one code base, use themes for different clients / apps and switch the tiapp.xml file to change the app name, id etc.
 
@@ -39,7 +39,7 @@ app/themes/app1/android/tiapp.xml
 app/themes/app1/tiapp.xml
 </pre>
 
-##Theme-based DefaultIcon.png
+## Theme-based DefaultIcon.png
 
 As of version 1.1.2 you can also theme the DefaultIcon.png -- DefaultIcon.png was added in Titanium SDK 5.0.0+ to auto-generate all required App Icons. Unfortunately DefaultIcon.png isn't supported with themes out-of-the-box with Titanium so TiTh now supports this.
 
@@ -52,7 +52,7 @@ app/themes/app1/android/DefaultIcon.png
 app/themes/app1/DefaultIcon.png
 </pre>
 
-##Setting themes
+## Setting themes
 
 Using the config above, the following will update the theme to **app1** and copy the tiapp.xml file from it's theme folder to the app root.
 
@@ -60,7 +60,7 @@ Using the config above, the following will update the theme to **app1** and copy
 $ tith set app1 ios ;
 ```
 
-##Clearing themes
+## Clearing themes
 
 To clear the theme, just use
 
@@ -80,7 +80,7 @@ app/themes/_default/android/tiapp.xml
 
 Suggestions, improvements, PRs, welcome!
 
-##License
+## License
 Copyright 2015 Jason Kneen
 
 Licensed under the Apache License, Version 2.0 (the "License");
