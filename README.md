@@ -16,13 +16,26 @@ As global CLI:
 
 ## Usage
 
+For detailed usage information use the help option, `-h`
+```
+$ tith -h
+```
+or with a specific command
+```
+$ tith set -h
+```
+
+## Actions
+
 This will show the current theme name:
 ```
-$ tith  
+$ tith status
 ```
-##Switch themes (Alloy)
+
+## Switch themes (Alloy)
+
 ```
-$ tith set <name> <platform>
+$ tith set <name> [platform]
 ```
 if you omit a platform (ios or android) it'll default to **ios**.
 
@@ -78,7 +91,28 @@ app/themes/_default/android/tiapp.xml
 
 (If a theme folder is prefixed with _ then the theme will be cleared in config.json but the tiapp.xml will still be used).
 
-Suggestions, improvements, PRs, welcome!
+## Fastlane Option
+
+This module also contains support for building apps with [Fastlane](https://fastlane.tools/). Currently it only supports the copying of Appfiles, but copying application metadata for updating store listings is a planned feature for the future.
+
+To copy Fastlane files use the fastlane option
+```
+$ tith set -F <theme> <platform>
+```
+or
+```
+$ tith set --fastlane <theme> <platform>
+```
+*Note that the platform parameter is required when using the fastlane option and will not default to ios*
+
+There are a few requirements for setup:
+- Your fastlane directory must be located in the root of the project and contain a [Fastfile](https://docs.fastlane.tools/advanced/Appfile/). (A future feature is to add the ability to point to a fastlane directory outside of the project.)
+- [Appfiles](https://docs.fastlane.tools/advanced/Appfile/) are theme-specific and platform dependent. The Appfile needs to be located in the theme's `platform/<platform>/fastlane` directory so for example the full path to an Appfile should be `app/themes/<theme>/platform/<platform>/fastlane/Appfile`.
+- This step is optional but **highly recommended**. Due to the possible sensitive nature of contents in these Appfiles (emails, passwords, etc.) it would be best if these files were not included in the Titanium build and ending up in your apps. Add 'fastlane' to the Titanium CLI's [ignoreDirs property](https://wiki.appcelerator.org/display/guides2/Titanium+CLI+Options#TitaniumCLIOptions-cli.ignoreDirs). If you are using default config settings, you can do this with `[appc] ti config cli.ignoreDirs "^(\\.svn|_svn|\\.git|\\.hg|\\.?[Cc][Vv][Ss]|\\.bzr|\\$RECYCLE\\.BIN|fastlane)$"`.
+
+If your project is version managed, it is also recommended to add the Appfile located in the fastlane directory to your `.gitignore` since it will only be used as a dummy file to be replaced, much like the root tiapp.xml
+
+## Suggestions, improvements, PRs, welcome!
 
 ## License
 Copyright 2015 Jason Kneen

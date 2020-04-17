@@ -41,22 +41,38 @@ function copyFile(fromPath, toPath) {
 function tith() {
 
     // status command, shows the current config
-    function status() {
+    function status(cmd) {
         console.log('\n');
         console.log('Current Alloy theme is: ' + chalk.cyan(alloyCfg.global.theme || "not defined"));
         console.log('\n');
     }
 
-    // set a new config by name
-    function set(name, platform) {
+    // clear command, clears the current theme in config
+    function clear(cmd) {
+      alloyCfg.global.theme = "";
+      console.log(chalk.yellow("\nClearing theme in config.json\n"));
+    }
 
-        platform = platform || "ios";
+    // set a new config by name
+    function set(name, platform, cmd) {
+
+        if (cmd.fastlane) {
+          //Require a platform when specifying fastlane option due to differences in metadata
+          if (!platform) {
+            console.log(chalk.red("\nSpecifying a platform is required with the Fastlane option! Copying of Fastlane files will be skipped."));
+            cmd.fastlane = undefined;
+          }
+        } else {
+          platform = platform || "ios";
+        }
 
         if (name) {
 
-            if (name.substring(0, 1) == "_") {
-                alloyCfg.global.theme = "";
-                console.log(chalk.yellow("\nClearing theme in config.json\n"));
+            if (typeof name != "string" ) {
+                clear();
+                cmd = name;
+            } else if (name.substring(0, 1) == "_") {
+                clear();
             } else {
                 alloyCfg.global.theme = name;
                 console.log(chalk.green('\nUpdated Theme to ') + chalk.cyan(alloyCfg.global.theme) + "\n");
@@ -99,9 +115,51 @@ function tith() {
                 }
             }
 
-                // if it exists in the themes folder, in a platform subfolder
-                console.log(chalk.green('Found a DefaultIcon.png in the theme platform folder\n'));
-                copyFile("./app/themes/" + name + "/" + platform + "/DefaultIcon.png", "./DefaultIcon.png");
+            // if it exists in the themes folder, in a platform subfolder
+            console.log(chalk.green('Found a DefaultIcon.png in the theme platform folder\n'));
+            copyFile("./app/themes/" + name + "/" + platform + "/DefaultIcon.png", "./DefaultIcon.png");
+
+            //TODO: Allow user to set a filePath to their fastlane directory located outside of project.
+
+            // check if a Fastfile exists in the fastlane directory of the root of project
+            if (fs.existsSync("./fastlane/Fastfile")) {
+
+              if (cmd.fastlane) {
+
+                //Check for and log which files exist
+
+                // Check for Appfile
+                if (fs.existsSync("./app/themes/" + name + "/platform/" + platform + "/fastlane/Appfile")) {
+
+                  console.log(chalk.green("Found an Appfile inside the theme's fastlane folder.\n"));
+                  copyFile("./app/themes/" + name + "/platform/" + platform + "/fastlane/Appfile", "./fastlane/Appfile");
+
+                } else {
+                    console.log(chalk.yellow("An Appfile does not exist for this theme.\n"));
+                }
+
+                /* TODO: Copy over Android's metadata folder
+                // Copy over metadata files
+                if(platform == "android"){
+
+                }
+                */
+
+              } else {
+                // Prompt availability of option
+                console.log(chalk.yellow("\nA Fastfile exists in your project. Fastlane files can also be copied over from your theme with the --fastlane or -F option."));
+              }
+
+            } else {
+
+              // Fastlane? TRUE
+              if (cmd.fastlane) {
+
+                // Prompt
+                console.log(chalk.yellow("\nYou specified the fastlane option, but no Fastfile can be found in the fastlane directory of your project."));
+
+              }
+            }
 
             function ncp(source, dest, options, callback) {
                 var cback = callback;
@@ -358,9 +416,28 @@ function tith() {
     // setup CLI
     program
         .version(pkg.version, '-v, --version')
-        .usage('[options]')
-        .description(pkg.description)
-        .option('-s, set name platform', 'Updates config.json to use the theme specified by name and platform');
+        .description(pkg.description);
+
+    program
+      .command('status')
+      .description("Shows the current configured theme")
+      .action(status);
+
+    program
+      .command('set <theme> [platform]')
+      .description('Updates config.json to use the theme specified by name and platform')
+      .option('-F, --fastlane', 'Also copies a theme\'s fastlane files, platform parameter is required with this option.')
+      .action(set);
+
+    program
+      .command('clear')
+      .description("Clears the configured theme")
+      .action(set);
+
+    program
+      .command('*')
+      .description("Any unhandled command will default to status")
+      .action(status);
 
     program.parse(process.argv);
 
@@ -369,10 +446,4 @@ function tith() {
         packageName: pkg.name,
         packageVersion: pkg.version
     }).notify();
-
-    if (program.set) {
-        set(program.args[0], program.args[1]);
-    } else {
-        status();
-    }
 }
