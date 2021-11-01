@@ -35,6 +35,6 @@
   "dependencies": {
     "chalk": "^0.5.1",
     "commander": "^2.12.2",
-    "update-notifier": "^0.2.2"
+    "update-notifier": "^5.1.0"
   }
 }
