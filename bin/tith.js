@@ -31,9 +31,11 @@ function createTiAppFile(fromPath) {
 
 function copyFile(fromPath, toPath) {
     fs.readFile(fromPath, function (err, data) {
-        fs.writeFile(toPath, data, (err) => {
-          if(err) throw err;
-        });
+        if (data) {
+            fs.writeFile(toPath, data, (err) => {
+                if(err) throw err;
+            });
+        }
     });
 }
 
